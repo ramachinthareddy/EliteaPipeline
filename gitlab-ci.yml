@@ -1,0 +1,38 @@
+stages:
+  - test
+
+# Create pipelines only for merge requests.
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - when: never
+
+variables:
+  # Keep Maven repo inside the project directory so GitLab cache can persist it
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+cache:
+  key: maven-$CI_COMMIT_REF_SLUG
+  paths:
+    - .m2/repository/
+
+mvn_test:
+  stage: test
+  image: maven:3.9.9-eclipse-temurin-17
+  script:
+    - mvn $MAVEN_CLI_OPTS -Dtest=PetDomainRunner test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/junitreports/*.xml
+        - target/surefire-reports/TEST-*.xml
+    paths:
+      - target/surefire-reports/
+      - target/karate-reports/
+    expire_in: 7 days
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
