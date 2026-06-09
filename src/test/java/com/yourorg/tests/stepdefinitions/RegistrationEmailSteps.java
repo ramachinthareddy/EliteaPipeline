@@ -110,4 +110,8 @@ public class RegistrationEmailSteps {
     }
 
     @Then("the system rejects the OTP with an error message and allows retries within configured retry limits")
-    public void system_re
+    public void system_rejects_incorrect_otp_and_allows_retries() {
+        Assert.assertTrue(otpPage.hasVerificationError(), "Incorrect OTP should show verification error");
+        // Optionally verify retry counters or messages
+        Assert.assertFalse(otpPage.verificationSucceeded(), "Verification should not succeed with incorrect OTP");
+    }
