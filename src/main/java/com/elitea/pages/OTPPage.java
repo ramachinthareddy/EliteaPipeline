@@ -4,23 +4,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class OTPPage extends BasePage {
-
-    private final By otpInput = By.id("otp_input");
-    private final By otpSubmit = By.id("otp_submit");
-    private final By resendOtp = By.id("resend_otp");
-    private final By otpNotification = By.id("otp_notification");
+    private final By otpInput = By.id("otp");
+    private final By verifyButton = By.id("verify-otp");
+    private final By resendButton = By.id("resend-otp");
+    private final By otpSentConfirmation = By.cssSelector(".otp-sent-info");
+    private final By throttleMessage = By.cssSelector(".otp-throttle");
 
     public OTPPage(WebDriver driver) {
         super(driver);
-    }
-
-    public boolean isDisplayed() {
-        try {
-            waitForVisible(otpInput);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     public void enterOtp(String otp) {
@@ -28,20 +19,19 @@ public class OTPPage extends BasePage {
         driver.findElement(otpInput).sendKeys(otp);
     }
 
-    public void submitOtp() {
-        driver.findElement(otpSubmit).click();
+    public void verifyOtp() {
+        driver.findElement(verifyButton).click();
     }
 
-    public void clickResend() {
-        driver.findElement(resendOtp).click();
+    public void resendOtp() {
+        driver.findElement(resendButton).click();
     }
 
-    public String getOtpNotification() {
-        try {
-            waitForVisible(otpNotification);
-            return driver.findElement(otpNotification).getText();
-        } catch (Exception e) {
-            return "";
-        }
+    public boolean isOtpSentConfirmed() {
+        return !driver.findElements(otpSentConfirmation).isEmpty();
+    }
+
+    public String getThrottleMessage() {
+        return driver.findElements(throttleMessage).isEmpty() ? "" : driver.findElement(throttleMessage).getText();
     }
 }
