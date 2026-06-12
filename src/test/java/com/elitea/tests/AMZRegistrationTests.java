@@ -78,3 +78,9 @@ public class AMZRegistrationTests {
         // When I enter the correct OTP and submit
         otpPage.enterOtp(otp);
         otpPage.submitOtp();
+
+        // Then the account page should be displayed with stored name/contact
+        Assert.assertTrue(accountPage.isAt(), "Account page should be displayed after successful OTP verification");
+        Assert.assertEquals(accountPage.getStoredName(), "John Doe", "Stored name should match the name provided during registration");
+        Assert.assertTrue(accountPage.getStoredContact().contains("john.doe.test+001@example.com"), "Stored contact should contain the registered email");
+    }
